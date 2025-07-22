@@ -67,7 +67,7 @@ body {
     }
 
     .imagen-box p {
-      margin-top: 40px;
+      margin-top: 5px;
       font-weight: bold;
       color: #333;
     }
@@ -110,7 +110,7 @@ h1 {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 h1, h2 {
-  font-family: 'Comic Neue', cursive;
+  font-family: 'Comic Neue';
 }
 
 h2 {
@@ -137,7 +137,7 @@ body {
 
 .nombre-romina {
   display: inline-block;
-  animation: reboteRomina 2s infinite ease-in-out;
+  
   font-weight: bold;
   font-size: 1.8em;
   color: #e91e63;
@@ -146,37 +146,41 @@ body {
 
 .nombre-emiliano {
   display: inline-block;
-  animation: reboteEmiliano 2s infinite ease-in-out;
+ 
   font-weight: bold;
   font-size: 1.8em;
   color: #4caf50;
   font-family: 'Baloo 2', cursive;
 }
 
-@keyframes reboteRomina {
-  0%, 100% {
-    transform: translateY(0);
-    color: #e91e63; 
-  }
-  50% {
-    transform: translateY(-8px);
-    color: #9c27b0; 
-  }
+
+@keyframes arcoirisColor {
+  0%   { color: red; }
+  20%  { color: orange; }
+  40%  { color: yellow; }
+  60%  { color: green; }
+  80%  { color: blue; }
+  100% { color: violet; }
+}
+
+.letra-animada {
+  animation: arcoirisColor 2s infinite;
 }
 
 
 
-@keyframes reboteEmiliano {
-  0%, 100% {
-    transform: translateY(0);
-    color: #4caf50; 
-  }
-  50% {
-    transform: translateY(-8px);
-    color: #2196f3; 
-  }
+.rebote-color {
+  animation: reboteColor 2s infinite ease-in-out;
+  display: inline-block;
+  font-size: 20px;
 }
 
+.instruccion {
+  font-size: 14px;      /* Ajusta el tamaño aquí */
+  color: #555;          /* Color del texto */
+  margin-top: 0px;      /* Espacio arriba */
+  font-style: italic;   /* Opcional: para darle estilo */
+}
 
 
 
@@ -185,22 +189,28 @@ body {
 <body>
 
   <h1>¡ESTÁS INVITADO!</h1>
-  <h2 id="subtitulo">Ven a festejar nuestro cumpleaños</h2>
+  <h2 id="subtitulo" class="rebote-color">Ven a festejar nuestro cumpleaños</h2>
+
 
   <div class="imagen-contenedor">
     <div class="imagen-box">
       <img src="Romina.png" alt="Romina">
-      <p class="nombre-romina">ROMINA</p>
+      <p class="instruccion">Da clic a la imagen para escuchar mi canción 🎵</p>
+      <p class="nombre-romina">ROMINA 7 AÑOS</p>
+        
+      
     </div>
 
     <div class="imagen-box">
       <img src="Emiliano.png" alt="Emiliano">
-      <p class="nombre-emiliano">EMILIANO</p>
+      <p class="instruccion">Da clic a la imagen para escuchar mi canción 🎵</p>
+      <p class="nombre-emiliano">EMILIANO 9 AÑOS</p>
+        
     </div>
   </div>
 
   <div class="fecha">
-   El día 26 de Julio del 2025
+   El día 26 A LAS 4:30 PM
     <div id="countdown"></div>
   </div>
 
@@ -221,7 +231,8 @@ body {
 
   <script>
     const countdownElement = document.getElementById("countdown");
-    const eventDate = new Date("2025-07-26T00:00:00");
+   const eventDate = new Date("2025-07-26T16:30:00");
+
   
     function updateCountdown() {
       const now = new Date();
@@ -251,6 +262,7 @@ body {
    const emilianoAudio = new Audio("Emiliano.MP3");
 const rominaAudio = new Audio("Romina.MP3");
 
+  
     let currentZoomed = null;
   
     function resetAll() {
@@ -283,31 +295,53 @@ const rominaAudio = new Audio("Romina.MP3");
     document.body.addEventListener("click", () => {
       resetAll();
     });
-    const subtitulo = document.getElementById("subtitulo");
-  const textoSub = subtitulo.innerText;
-  subtitulo.innerHTML = "";
 
-  textoSub.split("").forEach((letra) => {
-  const span = document.createElement("span");
-  span.innerText = letra === " " ? "\u00A0" : letra; 
-  subtitulo.appendChild(span);
-});
+function animarTextoPorLetras(elemento, texto, tipo) {
+  function ejecutarAnimacion() {
+    elemento.innerHTML = "";
+    const spans = [];
 
-  const spans = subtitulo.querySelectorAll("span");
-
-  function animarLetras() {
-    spans.forEach((span, i) => {
+    texto.split("").forEach((letra, i) => {
+      const span = document.createElement("span");
+      span.innerText = letra === " " ? "\u00A0" : letra;
       span.style.opacity = 0;
-      span.style.transform = "translateY(20px)";
+      span.style.display = "inline-block";
+      span.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+      span.style.transform = "translateY(10px)";
+
+      // 👇 Colores personalizados por tipo (romina o emiliano)
+      if (tipo === "romina") {
+        span.style.color = i % 2 === 0 ? "#e91e63" : "#9c27b0"; // rosa y morado
+      } else if (tipo === "emiliano") {
+        span.style.color = i % 2 === 0 ? "#4caf50" : "#2196f3"; // verde y azul
+      }
+
+      elemento.appendChild(span);
+      spans.push(span);
+
       setTimeout(() => {
         span.style.opacity = 1;
         span.style.transform = "translateY(0)";
       }, i * 100);
     });
+
+    const duracion = texto.length * 100 + 1500;
+    setTimeout(ejecutarAnimacion, duracion);
   }
 
-  animarLetras();
-  setInterval(animarLetras, 4500);
+  ejecutarAnimacion();
+}
+
+
+
+
+
+const rominaTexto = document.querySelector(".nombre-romina");
+const emilianoTexto = document.querySelector(".nombre-emiliano");
+
+ animarTextoPorLetras(rominaTexto, "ROMINA 7 AÑOS", "romina");
+animarTextoPorLetras(emilianoTexto, "DOMINIC 9 AÑOS", "emiliano");
+
 
   (() => {
     const canvas = document.getElementById('confetti-canvas');
